@@ -1,6 +1,8 @@
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
+import { addContacts } from '../../features/contactsSlice';
 import { Input, Forms, Button, IoPerson } from './ContactForm.styled';
 
 const initialValues = {
@@ -8,11 +10,28 @@ const initialValues = {
   number: '',
 };
 
-const ContactForm = ({ onSubmit }) => {
-  const handleSubmit = (values, { resetForm }) => {
-    onSubmit(values);
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
 
+  const nameCheck = name => {
+    return contacts.filter(contact => contact.name.includes(name));
+  };
+
+  const handleSubmit = (values, { resetForm }) => {
     resetForm();
+    const check = nameCheck(values.name);
+
+    if (check.length <= 0) {
+      dispatch(addContacts(values));
+      return;
+    }
+
+    Report.failure(
+      'Warning!',
+      `"${values.name}" is already in contacts`,
+      'Okay'
+    );
   };
 
   return (
@@ -48,7 +67,3 @@ const ContactForm = ({ onSubmit }) => {
 };
 
 export default ContactForm;
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
