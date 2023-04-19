@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import { Report } from 'notiflix/build/notiflix-report-aio';
-
-import { addContacts } from '../../features/contactsSlice';
+import { getContactsValue } from 'features/contactsSlice';
+import { addContacts } from 'features/contactsSlice';
 import { Input, Forms, Button, IoPerson } from './ContactForm.styled';
 
 const initialValues = {
@@ -11,8 +11,8 @@ const initialValues = {
 };
 
 const ContactForm = () => {
+  const contacts = useSelector(getContactsValue);
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
 
   const nameCheck = name => {
     return contacts.filter(contact => contact.name.includes(name));

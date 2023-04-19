@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { deleteContact, getContactsValue } from 'features/contactsSlice';
 
-import { setFilter, getFilterValue } from '../../features/filterContactsSlice';
-import { deleteContact, getContactsValue } from '../../features/contactsSlice';
+import { getFilterValue } from 'features/filterContactsSlice';
 
 import { NoContacts } from './NoContacts';
 
@@ -19,25 +19,22 @@ import {
 const ContactsList = () => {
   const contacts = useSelector(getContactsValue);
   const filter = useSelector(getFilterValue);
-  const dispatch = useDispatch();
-  const quantity = contacts.length;
 
-  console.log(filter);
+  const dispatch = useDispatch();
+
+  const quantityContacts = contacts.length;
 
   const visibleContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const handleDelete = id => {
-    dispatch(deleteContact(id));
-  };
   return (
     <>
-      {!quantity ? (
+      {quantityContacts.length <= 0 ? (
         <NoContacts />
       ) : (
         <>
-          <Info>Quantity yours contacts: {quantity}</Info>
+          <Info>Quantity yours contacts: {quantityContacts}</Info>
           <Container>
             {visibleContacts.map(({ id, name, number }) => (
               <Item key={id}>
@@ -46,7 +43,7 @@ const ContactsList = () => {
                   {name}: <CallOutline size={22} />
                   {number}
                 </Text>
-                <Btn type="button" onClick={() => handleDelete(id)}>
+                <Btn type="button" onClick={() => dispatch(deleteContact(id))}>
                   <IoTrashOut size={20} />
                 </Btn>
               </Item>
@@ -59,10 +56,3 @@ const ContactsList = () => {
 };
 
 export default ContactsList;
-
-// ContactsList.propTypes = {
-//   quantity: PropTypes.number.isRequired,
-//   contacts: PropTypes.array.isRequired,
-//   onDeleteContact: PropTypes.func.isRequired,
-// };
-// { quantity, contacts, onDeleteContact }
